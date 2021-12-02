@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import useForm from '../../hooks/form.js';
+import { SettingsContext } from '../../context/settings';
+
 import { v4 as uuid } from 'uuid';
 
 const ToDo = () => {
+	let SettingsValues = useContext(SettingsContext); // This is how you bring in context and how you opt into using context in your component.
+
 	const [list, setList] = useState([]);
 	const [incomplete, setIncomplete] = useState([]);
+	const [endIndex, setEndIndex] = useState(SettingsValues.pagination);
+
 	const { handleChange, handleSubmit } = useForm(addItem);
 
 	function addItem(item) {
@@ -36,6 +42,20 @@ const ToDo = () => {
 		document.title = `To Do List: ${incomplete}`;
 	}, [list]);
 
+	const paginate = () => {
+		let startIndex = endIndex - SettingsValues.pagination;
+
+		return list.slice(startIndex, endIndex);
+	};
+
+	const handleNext = (e) => {
+		e.preventDefault();
+		setEndIndex(endIndex + SettingsValues.pagination);
+	};
+	const handlePrev = (e) => {
+		e.preventDefault();
+		setEndIndex(endIndex - SettingsValues.pagination);
+	};
 	return (
 		<>
 			<header>
@@ -81,8 +101,8 @@ const ToDo = () => {
 				</label>
 			</form>
 
-			{list.map((item) => (
-				<div key={item.id}>
+			{paginate().map((item, idx) => (
+				<div key={idx}>
 					<p>{item.text}</p>
 					<p>
 						<small>Assigned to: {item.assignee}</small>
@@ -96,6 +116,8 @@ const ToDo = () => {
 					<hr />
 				</div>
 			))}
+			<button onClick={handlePrev}>Previous</button>
+			<button onClick={handleNext}>next</button>
 		</>
 	);
 };
