@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import useForm from '../../hooks/form.js';
 import { SettingsContext } from '../../context/settings';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, TextField, Slider } from '@mui/material';
+import { Box, TextField, Button } from '@mui/material';
+import TableForm from '../form/table-form.js';
 
 import { v4 as uuid } from 'uuid';
 
@@ -12,13 +13,15 @@ const ToDo = () => {
 	const [list, setList] = useState([]);
 	const [incomplete, setIncomplete] = useState([]);
 	const [endIndex, setEndIndex] = useState(SettingsValues.pagination);
-	console.log(list);
+	const [deletedRow, setDeletedRows] = useState([]);
+	const [id, setId] = useState([]);
+
 	const { handleChange, handleSubmit } = useForm(addItem);
 
 	function addItem(item) {
-		console.log(list);
 		item.id = uuid();
 		item.complete = false;
+		item.toggle;
 		if (!list.includes(item)) {
 			setList([...list, item]);
 		} else {
@@ -31,41 +34,69 @@ const ToDo = () => {
 		setList(items);
 	}
 
-	function toggleComplete(id) {
-		const items = list.map((item) => {
-			if (item.id == id) {
+	function toggleComplete(params) {
+		console.log(params);
+		const items = list.filter((item) => {
+			if (item.id !== params.id) {
+				return;
+			}
+			if (item.id == params.id) {
 				item.complete = !item.complete;
 			}
 			return item;
 		});
-
-		setList(items);
+		console.log(params.id);
+		setList(...list, items);
+		console.log(list);
 	}
 
-	useEffect(() => {
-		let incompleteCount = list.filter((item) => !item.complete).length;
-		setIncomplete(incompleteCount);
-		document.title = `To Do List: ${incomplete}`;
-	}, [list]);
+	// useEffect(() => {
+	// 	let incompleteCount = list.filter((item) => !item.complete).length;
+	// 	setIncomplete(incompleteCount);
+	// 	document.title = `To Do List: ${incomplete}`;
+	// }, [list]);
 
 	const columns = [
-		{ field: 'id', headerName: 'Item', width: 200 },
-		{ field: 'complete', headerName: 'Complete', width: 200 },
+		{
+			field: 'id',
+			headerName: 'Item',
+			width: 200,
+			valueGetter: toggleComplete,
+		},
+		{
+			field: 'complete',
+			headerName: 'Complete',
+			width: 100,
+			editable: true,
+		},
 		{ field: 'text', headerName: 'To-Do', width: 400 },
 		{ field: 'assignee', headerName: 'Assigned To', width: 130 },
 		{
 			field: 'difficulty',
 			headerName: 'Difficulty',
 			type: 'number',
-			width: 90,
+			width: 200,
 		},
-		// {
-		// 	field: 'difficulty',
-		// 	headerName: 'Difficulty',
-		// 	type: 'number',
-		// 	width: 90,
-		// },
+		{
+			field: 'toggle',
+			headerName: 'Complete?',
+			width: 200,
+			renderCell: () => <button onClick={toggleComplete}>Complete</button>,
+		},
 	];
+
+	// function handleCheck(params) {
+	// 	// console.log(e.t);
+	// 	console.log('params log', params.row);
+	// 	// setId(params.id);
+	// 	if (params.id === list.filter((item) => item.id)) {
+	// 		item.complete = true;
+	// 	}
+
+	// console.log(id);
+	// setDeletedRows(selection.list);
+	// console.log('deleted rows after click', deletedRow);
+	// }
 	return (
 		<>
 			<Box
@@ -114,6 +145,9 @@ const ToDo = () => {
 					<button type='submit'>Add Item</button>
 				</div>
 			</Box>
+			{/* <button variant='contained' color='danger' onClick={handleCheck}>
+				Delete
+			</button> */}
 			<div style={{ height: 400, width: '100%' }}>
 				<DataGrid
 					rows={list}
@@ -121,7 +155,7 @@ const ToDo = () => {
 					pageSize={SettingsValues.pagination}
 					rowsPerPageOptions={[5]}
 					checkboxSelection
-					disableMultipleSelection
+					// handleCheck={handleCheck}
 				/>
 			</div>
 		</>
