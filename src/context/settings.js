@@ -5,13 +5,14 @@ import { useState } from 'react';
 function SettingsProvider({ children }) {
 	const [pagination, setPagination] = useState(3);
 	const [sort, setSort] = useState('difficulty');
-	const [hide, setHide] = useState(false);
+	const [completed, setCompleted] = useState(false);
 
 	const values = {
 		pagination: 3,
 		rows: [5],
 		sort: 'difficulty',
-		hide: false,
+		completed: false,
+		setCompleted,
 	};
 
 	return (
