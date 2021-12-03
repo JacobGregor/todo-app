@@ -1,0 +1,24 @@
+$radius: 40%;
+
+header {
+	display: block;
+	background-color: #6d2c81;
+	color: white body header {
+		// background: #af0e0e;
+		border-bottom: 1px solid #eee;
+		color: rgb(255, 240, 240);
+		padding: 0;
+		margin: 0;
+		text-align: center;
+	}
+
+	h1 {
+		display: block;
+		font-size: 2em;
+		margin-block-start: 0.67em;
+		margin-block-end: 0.67em;
+		margin-inline-start: 0px;
+		margin-inline-end: 0px;
+		font-weight: bold;
+	}
+}
