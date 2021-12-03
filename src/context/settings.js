@@ -9,6 +9,7 @@ function SettingsProvider({ children }) {
 
 	const values = {
 		pagination: 3,
+		rows: [5],
 		sort: 'difficulty',
 		hide: false,
 	};

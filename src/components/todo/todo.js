@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import useForm from '../../hooks/form.js';
 import { SettingsContext } from '../../context/settings';
+import { DataGrid } from '@mui/x-data-grid';
+import { Box, TextField, Slider } from '@mui/material';
 
 import { v4 as uuid } from 'uuid';
 
@@ -10,14 +12,18 @@ const ToDo = () => {
 	const [list, setList] = useState([]);
 	const [incomplete, setIncomplete] = useState([]);
 	const [endIndex, setEndIndex] = useState(SettingsValues.pagination);
-
+	console.log(list);
 	const { handleChange, handleSubmit } = useForm(addItem);
 
 	function addItem(item) {
-		console.log(item);
+		console.log(list);
 		item.id = uuid();
 		item.complete = false;
-		setList([...list, item]);
+		if (!list.includes(item)) {
+			setList([...list, item]);
+		} else {
+			return alert('This Item Already Exists');
+		}
 	}
 
 	function deleteItem(id) {
@@ -42,82 +48,82 @@ const ToDo = () => {
 		document.title = `To Do List: ${incomplete}`;
 	}, [list]);
 
-	const paginate = () => {
-		let startIndex = endIndex - SettingsValues.pagination;
-
-		return list.slice(startIndex, endIndex);
-	};
-
-	const handleNext = (e) => {
-		e.preventDefault();
-		setEndIndex(endIndex + SettingsValues.pagination);
-	};
-	const handlePrev = (e) => {
-		e.preventDefault();
-		setEndIndex(endIndex - SettingsValues.pagination);
-	};
+	const columns = [
+		{ field: 'id', headerName: 'Item', width: 200 },
+		{ field: 'complete', headerName: 'Complete', width: 200 },
+		{ field: 'text', headerName: 'To-Do', width: 400 },
+		{ field: 'assignee', headerName: 'Assigned To', width: 130 },
+		{
+			field: 'difficulty',
+			headerName: 'Difficulty',
+			type: 'number',
+			width: 90,
+		},
+		// {
+		// 	field: 'difficulty',
+		// 	headerName: 'Difficulty',
+		// 	type: 'number',
+		// 	width: 90,
+		// },
+	];
 	return (
 		<>
-			<header>
-				<h1>To Do List: {incomplete} items pending</h1>
-			</header>
-			<form onSubmit={handleSubmit}>
-				<h2>Add To Do Item</h2>
-
-				<label>
-					<span>To Do Item</span>
-					<input
-						onChange={handleChange}
-						name='text'
-						type='text'
-						placeholder='Item Details'
-					/>
-				</label>
-
-				<label>
-					<span>Assigned To</span>
-					<input
-						onChange={handleChange}
+			<Box
+				component='form'
+				sx={{
+					'& .MuiTextField-root': { m: 1, width: '25ch' },
+				}}
+				noValidate
+				autoComplete='off'
+				onSubmit={handleSubmit}
+			>
+				<div>
+					<TextField
+						required
 						name='assignee'
-						type='text'
-						placeholder='Assignee Name'
-					/>
-				</label>
-
-				<label>
-					<span>Difficulty</span>
-					<input
+						label='Assign-To'
+						placeholder='Full Name'
+						multiline
+						maxRows={4}
 						onChange={handleChange}
-						defaultValue={3}
-						type='range'
-						min={1}
-						max={5}
-						name='difficulty'
+						variant='standard'
+						helperText='Required'
 					/>
-				</label>
+					<TextField
+						required
+						name='difficulty'
+						label='Difficulty'
+						placeholder='Scale(1-5)'
+						multiline
+						variant='standard'
+						onChange={handleChange}
+						helperText='Required'
+					/>
 
-				<label>
+					<TextField
+						required
+						name='text'
+						label='To-Do'
+						placeholder='What do you need To-Do?'
+						multiline
+						maxRows={4}
+						onChange={handleChange}
+						variant='standard'
+						helperText='Required'
+					/>
 					<button type='submit'>Add Item</button>
-				</label>
-			</form>
-
-			{paginate().map((item, idx) => (
-				<div key={idx}>
-					<p>{item.text}</p>
-					<p>
-						<small>Assigned to: {item.assignee}</small>
-					</p>
-					<p>
-						<small>Difficulty: {item.difficulty}</small>
-					</p>
-					<div onClick={() => toggleComplete(item.id)}>
-						Complete: {item.complete.toString()}
-					</div>
-					<hr />
 				</div>
-			))}
-			<button onClick={handlePrev}>Previous</button>
-			<button onClick={handleNext}>next</button>
+			</Box>
+			<div style={{ height: 400, width: '100%' }}>
+				<DataGrid
+					rows={list}
+					columns={columns}
+					pageSize={SettingsValues.pagination}
+					rowsPerPageOptions={[5]}
+					checkboxSelection
+					disableMultipleSelection
+				/>
+			</div>
 		</>
 	);
 };
