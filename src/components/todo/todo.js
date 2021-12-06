@@ -34,6 +34,10 @@ const ToDo = () => {
 		setList(items);
 	}
 
+	const renderButton = (params) => {
+		return <button>{params.id}</button>;
+	};
+
 	function toggleComplete(params) {
 		console.log(params);
 		const items = list.filter((item) => {
@@ -45,9 +49,7 @@ const ToDo = () => {
 			}
 			return item;
 		});
-		console.log(params.id);
 		setList(...list, items);
-		console.log(list);
 	}
 
 	// useEffect(() => {
@@ -61,13 +63,16 @@ const ToDo = () => {
 			field: 'id',
 			headerName: 'Item',
 			width: 200,
-			valueGetter: toggleComplete,
 		},
 		{
 			field: 'complete',
 			headerName: 'Complete',
 			width: 100,
 			editable: true,
+			// valueGetter: renderButton,
+			// 	renderCell: (param) => (
+			// 		<button onClick={toggleComplete}>{JSON.stringify(param)}</button>
+			// 	),
 		},
 		{ field: 'text', headerName: 'To-Do', width: 400 },
 		{ field: 'assignee', headerName: 'Assigned To', width: 130 },
@@ -81,7 +86,7 @@ const ToDo = () => {
 			field: 'toggle',
 			headerName: 'Complete?',
 			width: 200,
-			renderCell: () => <button onClick={toggleComplete}>Complete</button>,
+			renderCell: renderButton,
 		},
 	];
 
