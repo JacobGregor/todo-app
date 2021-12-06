@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SettingsProvider from './context/settings';
+import AuthProvider from './context/auth/context';
 import App from './app.js';
 
 function Main() {
 	return (
 		<SettingsProvider>
-			<App />
+			<AuthProvider>
+				<App />
+			</AuthProvider>
 		</SettingsProvider>
 	);
 }
