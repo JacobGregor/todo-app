@@ -30,9 +30,10 @@ function AuthProvider({ children }) {
 	}
 
 	function login(username, password) {
+		console.log('hitting the login function');
 		// send a http request with username and password in the request headers
 		let user = testUsers[username];
-
+		console.log(user);
 		// validating appropriate user stuff is returned from the server.
 		if (user) {
 			const token = jwt.sign({ user }, SECRET);
@@ -41,7 +42,9 @@ function AuthProvider({ children }) {
 				token: token,
 				capabilities: user.capabilities,
 			});
+			console.log('this is the login console before setting', isLoggedIn);
 			setIsLoggedIn(true);
+			console.log('this is the login console after setting', isLoggedIn);
 		}
 	}
 
@@ -53,11 +56,11 @@ function AuthProvider({ children }) {
 	}
 
 	return (
-		<AuthContext.Provider
+		<LoginContext.Provider
 			value={{ user, isLoggedIn, login, logout, isAuthorized }}
 		>
 			{children}
-		</AuthContext.Provider>
+		</LoginContext.Provider>
 	);
 }
 
