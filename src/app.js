@@ -5,33 +5,30 @@ import ToDo from './components/todo/todo.js';
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
 import Settings from './components/settings/settings';
-import Auth from './context/auth/login.js';
+import Auth from './context/auth/auth';
+import Login from './context/auth/login';
 import './scss/header.scss';
 import './scss/form.scss';
-import './scss/footer.scss';
-import AuthProvider from './context/auth/context.js';
 
 function App() {
 	return (
 		<>
 			<Router>
-				{!AuthProvider.user}
-				<Header />
-				<Switch>
-					{/* Main Route */}
-					<Route exact path='/'>
-						<Auth>
+				<Login />
+				<Auth>
+					<Header />
+					<Switch>
+						{/* Main Route */}
+						<Route exact path='/'>
 							<ToDo />
-						</Auth>
-					</Route>
-					{/* Route to Settings */}
-					<Route path='/settings'>
-						<Auth>
+						</Route>
+						{/* Route to Settings */}
+						<Route path='/settings'>
 							<Settings />
-						</Auth>
-					</Route>
-				</Switch>
-				<Footer />
+						</Route>
+					</Switch>
+					<Footer />
+				</Auth>
 			</Router>
 		</>
 	);
